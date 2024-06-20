@@ -4,27 +4,24 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-interface Iroy {
+interface IRoy {
   name: string;
-  arr: Icondition[];
+  arr: ICondition[];
 }
-interface Icondition {
+interface ICondition {
   condition: boolean;
 }
 
 function App() {
-  const handelLogin = (): number => {
-    return Math.floor(Math.random() * 99) + 2;
-  };
+
   const [roy, setRoy] = useState<number>(0);
   const [column, setColumn] = useState<number>(0);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setRoy(handelLogin());
-      setColumn(handelLogin());
+      setRoy(Math.floor(Math.random() * 99) + 2);
+      setColumn(Math.floor(Math.random() * 99) + 2);
     }, 1500);
-
     return () => clearTimeout(timeoutId);
   }, []);
 
@@ -40,17 +37,13 @@ function App() {
     return arr;
   };
   const arrRoy = function () {
-    const arrR: Array<Iroy> = [];
+    const arrR: Array<IRoy> = [];
     for (let i = 0; i < roy; i++) {
-      // if (i === 0) {
-      //   arrR.push({ name: ``, condition: false});
-      // } else {
       const row = [];
       for (let i = 0; i < column - 1; i++) {
         row.push({ condition: Math.random() > 0.5 });
       }
       arrR.push({ name: `Заказ ${i + 1}`, arr: [...row] });
-      // }
     }
     return arrR;
   };
@@ -61,7 +54,7 @@ function App() {
         <tr>
           {arrColumn().map((it, i) => {
             return (
-              <th scope={String(i)} key={it}>
+              <th scope={String(i)} key={it} className="column">
                 {it}
               </th>
             );
@@ -71,12 +64,12 @@ function App() {
       <tbody>
         {arrRoy().map((it, i) => {
           return (
-            <tr>
-              <th scope={String(i)} key={it.name}>
+            <tr key={`row${it.name}`}>
+              <th scope={String(i)} key={`th${it.name}${i}`} className="row">
                 {it.name}
               </th>
-              {it.arr.map((item) => {
-                return <td className={item.condition ? "green" : "red"}></td>;
+              {it.arr.map((item,i) => {
+                return <td className={item.condition ? "green" : "red"} key={`td${it.name}${i}`}></td>;
               })}
             </tr>
           );

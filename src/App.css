@@ -12,8 +12,7 @@ caption {
   font-weight: bold;
 }
 
-thead,
-tfoot {
+thead{
   background-color: rgb(228 240 245);
 }
 
@@ -43,4 +42,14 @@ tfoot td {
 }
 .red{
   background-color: white;
+}
+.row{
+  display: inline-block;
+width: 150px;
+}
+.column{
+  white-space: nowrap;
+  height: 150px;
+  -webkit-transform: rotate(-270deg); 
+  -moz-transform: rotate(-270deg);
 }
