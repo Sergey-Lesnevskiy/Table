@@ -1,35 +1,89 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import { useState } from 'react'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
+import { useEffect, useState } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface Iroy {
+  name: string;
+  arr: Icondition[];
+}
+interface Icondition {
+  condition: boolean;
 }
 
-export default App
+function App() {
+  const handelLogin = (): number => {
+    return Math.floor(Math.random() * 99) + 2;
+  };
+  const [roy, setRoy] = useState<number>(0);
+  const [column, setColumn] = useState<number>(0);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setRoy(handelLogin());
+      setColumn(handelLogin());
+    }, 1500);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const arrColumn = function () {
+    const arr = [];
+    for (let i = 0; i < column; i++) {
+      if (i === 0) {
+        arr.push(``);
+      } else {
+        arr.push(`Обработка ${i}`);
+      }
+    }
+    return arr;
+  };
+  const arrRoy = function () {
+    const arrR: Array<Iroy> = [];
+    for (let i = 0; i < roy; i++) {
+      // if (i === 0) {
+      //   arrR.push({ name: ``, condition: false});
+      // } else {
+      const row = [];
+      for (let i = 0; i < column - 1; i++) {
+        row.push({ condition: Math.random() > 0.5 });
+      }
+      arrR.push({ name: `Заказ ${i + 1}`, arr: [...row] });
+      // }
+    }
+    return arrR;
+  };
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          {arrColumn().map((it, i) => {
+            return (
+              <th scope={String(i)} key={it}>
+                {it}
+              </th>
+            );
+          })}
+        </tr>
+      </thead>
+      <tbody>
+        {arrRoy().map((it, i) => {
+          return (
+            <tr>
+              <th scope={String(i)} key={it.name}>
+                {it.name}
+              </th>
+              {it.arr.map((item) => {
+                return <td className={item.condition ? "green" : "red"}></td>;
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+export default App;
