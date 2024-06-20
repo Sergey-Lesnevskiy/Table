@@ -1,31 +1,22 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import { useEffect, useState } from "react";
 import "./App.css";
-
-interface IRoy {
-  name: string;
-  arr: ICondition[];
-}
-interface ICondition {
-  condition: boolean;
-}
+import { IRow } from "./types/type";
+import MyColumn from "./components/MyColunm";
 
 function App() {
 
-  const [roy, setRoy] = useState<number>(0);
+  const [row, setRow] = useState<number>(0);
   const [column, setColumn] = useState<number>(0);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setRoy(Math.floor(Math.random() * 99) + 2);
+      setRow(Math.floor(Math.random() * 99) + 2);
       setColumn(Math.floor(Math.random() * 99) + 2);
     }, 1500);
     return () => clearTimeout(timeoutId);
   }, []);
 
-  const arrColumn = function () {
+  const arrColumn = function (column:number):string[] {
     const arr = [];
     for (let i = 0; i < column; i++) {
       if (i === 0) {
@@ -36,9 +27,10 @@ function App() {
     }
     return arr;
   };
-  const arrRoy = function () {
-    const arrR: Array<IRoy> = [];
-    for (let i = 0; i < roy; i++) {
+
+  const arrRow = function (row:number):IRow[] {
+    const arrR: Array<IRow> = [];
+    for (let i = 0; i < row; i++) {
       const row = [];
       for (let i = 0; i < column - 1; i++) {
         row.push({ condition: Math.random() > 0.5 });
@@ -52,24 +44,18 @@ function App() {
     <table>
       <thead>
         <tr>
-          {arrColumn().map((it, i) => {
-            return (
-              <th scope={String(i)} key={it} className="column">
-                {it}
-              </th>
-            );
-          })}
+          <MyColumn arrColumn={arrColumn(column)}/>
         </tr>
       </thead>
       <tbody>
-        {arrRoy().map((it, i) => {
+        {arrRow(row).map((tr, i) => {
           return (
-            <tr key={`row${it.name}`}>
-              <th scope={String(i)} key={`th${it.name}${i}`} className="row">
-                {it.name}
+            <tr key={`row${tr.name}`}>
+              <th scope={String(i)} key={`th${tr.name}${i}`} className="row">
+                {tr.name}
               </th>
-              {it.arr.map((item,i) => {
-                return <td className={item.condition ? "green" : "red"} key={`td${it.name}${i}`}></td>;
+              {tr.arr.map((td,i) => {
+                return <td className={td.condition ? "green" : "red"} key={`td${tr.name}${i}`}></td>;
               })}
             </tr>
           );
