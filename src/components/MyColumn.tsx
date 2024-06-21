@@ -1,9 +1,8 @@
-export interface Column {
-  arrColumn: string[]
-}
-function MyColumn(props: Column) {
+import { Column } from "../types/type";
+
+function MyColumn({arrColumn}: Column) {
   return(<>
-  {props.arrColumn.map((it, i) => {
+  {arrColumn.map((it, i) => {
     return (
       <th scope={String(i)} key={it} className="column">
         {it}

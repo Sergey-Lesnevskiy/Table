@@ -5,3 +5,6 @@ export interface IRow {
 interface ICondition {
   condition: boolean;
 }
+export interface Column {
+  arrColumn: string[]
+}

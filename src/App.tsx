@@ -1,67 +1,83 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { IRow } from "./types/type";
-import MyColumn from "./components/MyColunm";
+import MyColumn from "./components/MyColumn";
+import MyRow from "./components/MyRows";
+
+function getRandomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const arrColumn = async function (column: number): Promise<string[]> {
+  const arrColumns = new Array(column);
+
+  const promise = new Promise((resolve) => {
+    setTimeout(() => {
+      for (let i = 0; i < column; i++) {
+        if (i === 0) {
+          arrColumns[i] = "";
+        } else {
+          arrColumns[i] = `Обработка ${i}`;
+        }
+      }
+      resolve(arrColumns);
+    }, 1500);
+  });
+  return promise as Promise<string[]>;
+};
+
+const arrRow = async function (
+  rowCount: number,
+  columnCount: number
+): Promise<IRow[]> {
+  const arrRows: Array<IRow> = new Array(rowCount);
+
+  const promise = new Promise((resolve) => {
+    setTimeout(() => {
+      for (let i = 0; i < rowCount; i++) {
+        const row = new Array(columnCount);
+        for (let j = 0; j < columnCount - 1; j++) {
+          const condition = Math.random() > 0.5;
+          row[j] = { condition };
+        }
+        arrRows[i] = { name: `Заказ ${i + 1}`, arr: row };
+      }
+      resolve(arrRows);
+    }, 1500);
+  });
+
+  return promise as Promise<IRow[]>;
+};
 
 function App() {
-
-  const [row, setRow] = useState<number>(0);
-  const [column, setColumn] = useState<number>(0);
-
+  const [rows, setRows] = useState<IRow[]>([]);
+  const [columns, setColumns] = useState<string[]>([]);
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setRow(Math.floor(Math.random() * 99) + 2);
-      setColumn(Math.floor(Math.random() * 99) + 2);
-    }, 1500);
-    return () => clearTimeout(timeoutId);
+    (async function () {
+      const columnCount = getRandomInt(2, 100);
+      setColumns(await arrColumn(columnCount));
+      const rowCount = getRandomInt(2, 100);
+      setRows(await arrRow(rowCount, columnCount));
+    })();
   }, []);
-
-  const arrColumn = function (column:number):string[] {
-    const arr = [];
-    for (let i = 0; i < column; i++) {
-      if (i === 0) {
-        arr.push(``);
-      } else {
-        arr.push(`Обработка ${i}`);
-      }
-    }
-    return arr;
-  };
-
-  const arrRow = function (row:number):IRow[] {
-    const arrR: Array<IRow> = [];
-    for (let i = 0; i < row; i++) {
-      const row = [];
-      for (let i = 0; i < column - 1; i++) {
-        row.push({ condition: Math.random() > 0.5 });
-      }
-      arrR.push({ name: `Заказ ${i + 1}`, arr: [...row] });
-    }
-    return arrR;
-  };
+  const isLoading = rows.length === 0 || columns.length === 0;
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <MyColumn arrColumn={arrColumn(column)}/>
-        </tr>
-      </thead>
-      <tbody>
-        {arrRow(row).map((tr, i) => {
-          return (
-            <tr key={`row${tr.name}`}>
-              <th scope={String(i)} key={`th${tr.name}${i}`} className="row">
-                {tr.name}
-              </th>
-              {tr.arr.map((td,i) => {
-                return <td className={td.condition ? "green" : "red"} key={`td${tr.name}${i}`}></td>;
-              })}
+    <>
+      {isLoading && <div className="loader">Идет загрузка...</div>}
+      {!isLoading && (
+        <table>
+          <thead>
+            <tr>
+              <MyColumn arrColumn={columns} />
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            <MyRow arrRow={rows} />
+          </tbody>
+        </table>
+      )}
+    </>
   );
 }
 
