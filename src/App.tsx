@@ -1,82 +1,85 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { IRow } from "./types/type";
-import MyColumn from "./components/MyColumn";
-import MyRow from "./components/MyRows";
+import { Cell} from "./types/type";
+import Row from "./components/Row";
+import HeadRow from "./components/HeadRow";
+
+
+
+/// В этой ветке я создаю таблицу с помощью данных. 1 функция возвращает ряд с количеством колонок, 2 формирует таблицу с помощью рядов
 
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const getColumns = async function (column: number): Promise<string[]> {
-  const arrColumns = new Array(column);
-
+const getRow = async function(itemColumn:number, rowsCount:number){
   const promise = new Promise((resolve) => {
     setTimeout(() => {
-      for (let i = 0; i < column; i++) {
-        if (i === 0) {
-          arrColumns[i] = "";
-        } else {
-          arrColumns[i] = `Обработка ${i}`;
-        }
+      resolve(row);
+    },1500)
+    const row = [...Array(rowsCount)].map((_, itemRow) => {
+      if (itemColumn === 0 && itemRow === 0) {
+        return {
+          name: null,
+          isGreen: null,
+        };
+      } else if (itemRow === 0) {
+        return {
+          name: `Заказ`,
+          isGreen: null,
+        };
+      } else if (itemColumn === 0) {
+        return {
+          name: `Обработка ${itemRow}`,
+          isGreen: null,
+        };
+      } else {
+        return {
+          name: null,
+          isGreen: Math.random() > 0.5,
+        };
       }
-      resolve(arrColumns);
-    }, 1500);
-  });
-  return promise as Promise<string[]>;
-};
-
-const getRows = async function (
-  rowCount: number,
-  columnCount: number
-): Promise<IRow[]> {
-  const arrRows: Array<IRow> = new Array(rowCount);
-  const promise = new Promise((resolve) => {
-    setTimeout(() => {
-      for (let i = 0; i < rowCount; i++) {
-        const row = new Array(columnCount);
-        for (let j = 0; j < columnCount - 1; j++) {
-          const isTrue = Math.random() > 0.5;
-          row[j] = { isTrue };
-        }
-        arrRows[i] = { name: `Заказ ${i + 1}`, arr: row };
-      }
-      resolve(arrRows);
-    }, 1500);
-  });
-
-  return promise as Promise<IRow[]>;
-};
+    });
+  })
+  return promise as Promise<Cell[]>;
+}
+const getTable = async function(columnCount:number, rowsCount:number) {
+  const promise = await Promise.all([...Array(columnCount)].map(async (_, itemColumn) => {
+    return await getRow(itemColumn, rowsCount )
+  }))
+  return promise
+}
 
 function App() {
-  const [rows, setRows] = useState<IRow[]>([]);
-  const [columns, setColumns] = useState<string[]>([]);
+  const [table, setTable] = useState <Cell[][]>([[]]);
   useEffect(() => {
     (async function () {
-      const columnCount = getRandomInt(2, 100);
-      setColumns(await getColumns(columnCount));
-      const rowCount = getRandomInt(2, 100);
-      setRows(await getRows(rowCount, columnCount));
+      setTable(await getTable(getRandomInt(2, 100), getRandomInt(2, 100)))
     })();
   }, []);
 
-  const isLoading = rows.length === 0 || columns.length === 0;
+  const isLoading = table.length === 1;
 
   return (
     <>
-      {isLoading && <div className="loader">Идет загрузка...</div>}
-      {!isLoading && (
+    {isLoading && <div className="loader">Идет загрузка...</div>}
+      {!isLoading && ( 
         <table>
           <thead>
             <tr>
-              <MyColumn arrColumns={columns} />
+              <HeadRow arrFirstRow = {table[0]}/>
             </tr>
           </thead>
           <tbody>
-            <MyRow arrRows={rows} />
+            {table.slice(1).map((row, lineNumber)=>{
+              return(
+                <Row table={row} lineNumber={lineNumber} key={`row${lineNumber}`}/>
+              )
+            })}
+          
           </tbody>
         </table>
-      )}
+      )} 
     </>
   );
 }
