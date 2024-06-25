@@ -1,12 +1,10 @@
-import { IRow } from "../types/type";
+import { Rows } from "../types/type";
 
-export interface Row {
-  arrRow: IRow[];
-}
-function MyRow({arrRow}:Row) {
+
+function MyRow({ arrRows }: Rows) {
   return (
     <>
-      {arrRow.map((tr, i) => {
+      {arrRows.map((tr, i) => {
         return (
           <tr key={`row${tr.name}`}>
             <th scope={String(i)} key={`th${tr.name}${i}`} className="row">
@@ -15,7 +13,7 @@ function MyRow({arrRow}:Row) {
             {tr.arr.map((td, i) => {
               return (
                 <td
-                  className={td.condition ? "green" : "red"}
+                  className={td.isTrue ? "green" : "red"}
                   key={`td${tr.name}${i}`}
                 ></td>
               );

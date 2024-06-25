@@ -1,8 +1,8 @@
-import { Column } from "../types/type";
+import { Columns } from "../types/type";
 
-function MyColumn({arrColumn}: Column) {
+function MyColumn({arrColumns}: Columns) {
   return(<>
-  {arrColumn.map((it, i) => {
+  {arrColumns.map((it, i) => {
     return (
       <th scope={String(i)} key={it} className="column">
         {it}

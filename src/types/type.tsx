@@ -3,8 +3,14 @@ export interface IRow {
   arr: ICondition[];
 }
 interface ICondition {
-  condition: boolean;
+  isTrue: boolean;
 }
-export interface Column {
-  arrColumn: string[]
+export interface Columns {
+  arrColumns: string[]
 }
+export interface Rows {
+  arrRows: IRow[];
+}
+
+
+
